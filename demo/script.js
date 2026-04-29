@@ -112,14 +112,24 @@
 
     const ctx = canvas.getContext('2d', { alpha: false });
     const images = new Array(FRAME_COUNT);
-    let currentIndex = 0;
+    let currentIndex = 0;     // last successfully drawn frame
+    let expectedIndex = 0;    // most recent frame index ScrollTrigger asked for
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     const preload = (i) => new Promise((resolve) => {
       const img = new Image();
       img.decoding = 'async';
       img.src = framePath(i);
-      img.onload = () => { images[i] = img; resolve(); };
+      img.onload = () => {
+        images[i] = img;
+        // If this newly-loaded frame is the one ScrollTrigger most
+        // recently asked for (but couldn't draw because the image
+        // wasn't ready), draw it now. Without this, the canvas sticks
+        // on whatever frame was last successfully drawn until the
+        // user scrolls again.
+        if (i === expectedIndex && i !== currentIndex) drawFrame(i);
+        resolve();
+      };
       img.onerror = () => resolve();
     });
 
@@ -161,6 +171,10 @@
     }
 
     function drawFrame(i) {
+      // Always record what was requested, even if we can't draw it
+      // yet — preload's onload checks this to know whether to
+      // retroactively redraw once the image arrives.
+      expectedIndex = i;
       const img = images[i];
       if (!img) return;
       const W = canvas.width, H = canvas.height;
