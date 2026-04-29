@@ -112,33 +112,22 @@
 
     const ctx = canvas.getContext('2d', { alpha: false });
     const images = new Array(FRAME_COUNT);
-    let currentIndex = 0;     // last successfully drawn frame
-    let expectedIndex = 0;    // most recent frame index ScrollTrigger asked for
+    let currentIndex = 0;
     let dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     const preload = (i) => new Promise((resolve) => {
       const img = new Image();
       img.decoding = 'async';
       img.src = framePath(i);
-      img.onload = () => {
-        images[i] = img;
-        // If this newly-loaded frame is the one ScrollTrigger most
-        // recently asked for (but couldn't draw because the image
-        // wasn't ready), draw it now. Without this, the canvas sticks
-        // on whatever frame was last successfully drawn until the
-        // user scrolls again.
-        if (i === expectedIndex && i !== currentIndex) drawFrame(i);
-        resolve();
-      };
+      img.onload = () => { images[i] = img; resolve(); };
       img.onerror = () => resolve();
     });
 
-    // Show the site as soon as the FIRST frame is decoded — don't make
-    // the user wait for all 121 (~386 MB) over the network. The remaining
-    // frames stream in the background; drawFrame() is already a no-op for
-    // any frame index whose image hasn't arrived yet, so the canvas just
-    // holds the last successfully-drawn frame until the next one lands.
-    preload(0).then(() => {
+    // Wait for ALL frames to load before showing the site. With the
+    // 16 MB JPG sequence this is typically 1-3 s on a normal connection
+    // — short enough to be acceptable, and once the loader dismisses
+    // every frame is in memory so scrolling is instantly perfect.
+    Promise.all(Array.from({ length: FRAME_COUNT }, (_, i) => preload(i))).then(() => {
       sizeCanvas();
       drawFrame(0);
 
@@ -151,16 +140,6 @@
       }
       bindScrollSequence();
       bindOverlays();
-
-      // Background-stream the remaining 120 frames. Refresh ScrollTrigger
-      // once they're all in so any cached layout that depended on them
-      // is up to date (defensive — the deck doesn't actually depend on
-      // frame load state).
-      const rest = [];
-      for (let i = 1; i < FRAME_COUNT; i++) rest.push(preload(i));
-      Promise.all(rest).then(() => {
-        if (window.ScrollTrigger) ScrollTrigger.refresh();
-      });
     });
 
     function sizeCanvas() {
@@ -171,10 +150,6 @@
     }
 
     function drawFrame(i) {
-      // Always record what was requested, even if we can't draw it
-      // yet — preload's onload checks this to know whether to
-      // retroactively redraw once the image arrives.
-      expectedIndex = i;
       const img = images[i];
       if (!img) return;
       const W = canvas.width, H = canvas.height;
