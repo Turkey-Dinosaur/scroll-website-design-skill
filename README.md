@@ -2,13 +2,13 @@
 
 A Claude Code skill (and complete demo site) for building **single-viewport modal-deck websites** — pages where a fixed hero canvas stays as a backdrop while a vertical conveyor belt of solid-coloured modal cards translates upward 1:1 with body scroll. No visible scrollbar, no overlapping elements, mouse-tracked parallax, full mobile parity.
 
-The skill is the distilled-pattern playbook (`SKILL.md`). The `demo/` folder is a fully-working reference site you can clone, run on `localhost`, and customise — it includes the full 121-frame hero animation and all gallery imagery from the production site this skill was extracted from.
+The skill is the distilled-pattern playbook (`SKILL.md`). The `demo/` folder is a fully-working reference site you can clone, run on `localhost`, and customise — it includes the full 61-frame hero animation and all gallery imagery from the production site this skill was extracted from.
 
 ## What you get
 
 - **`SKILL.md`** — the reusable design-pattern guide. Loaded by Claude Code when you invoke the skill from any project, gives the model a complete blueprint of the architecture, choreography, and gotchas.
 - **`demo/`** — a self-contained replica site. Open `demo/index.html` in a browser via `localhost` (e.g. `python -m http.server` from the `demo/` folder) and you should see exactly the same scroll experience as the production site — placeholder brand and contact info only.
-- **121 hero frames** in `demo/frames/` (JPG, ~33 MB total).
+- **61 hero frames** in `demo/frames/` (JPG, ~16 MB total).
 - **Eight placeholder gallery SVGs** in `demo/`.
 - **Reduced-motion fallback** that reverts to a normal stacked-section layout for users with `prefers-reduced-motion: reduce`.
 
@@ -64,7 +64,7 @@ Install once per machine:
 ### Steps
 
 ```bash
-# 1. Clone the repo (no LFS — frames ship as JPGs in regular git, ~33 MB).
+# 1. Clone the repo (no LFS — frames ship as JPGs in regular git, ~16 MB).
 git clone https://github.com/Turkey-Dinosaur/scroll-website-design-skill.git
 cd scroll-website-design-skill/demo
 
@@ -81,7 +81,7 @@ python3 -m http.server 8080
 
 1. A green loading screen with a spinner — usually for under a second.
 2. Hero garden image fades in with the headline "Your garden, reimagined."
-3. Scrolling triggers a 121-frame disassembly animation while four headlines pass through view.
+3. Scrolling triggers a 61-frame disassembly animation while four headlines pass through view.
 4. After the hero, six modal cards (about, work, services, process, faq, contact) slide up the screen in sequence as a conveyor belt.
 5. Mouse parallax on desktop, hamburger nav on mobile, back-to-top button, no visible scrollbar.
 
@@ -90,15 +90,7 @@ python3 -m http.server 8080
 - **Site is stuck on "Loading the garden…"** A frame failed to fetch. Open DevTools → Network and look for a 404 on any `frames/frame-NNN.jpg`. The loader only blocks until frame 1 arrives, so a stuck loader means frame 1 itself is missing.
 - **Conveyor doesn't move when scrolling.** Check the browser console for JS errors. Most commonly: GSAP CDN failed to load — verify network access to `cdn.jsdelivr.net`.
 - **Frames look blocky / artefacted.** They're JPG q≈85 — high quality but you may want to swap in your own crisper sequence (see "Customise" below).
-- **You cloned an older revision that referenced PNG frames.** Pull main (`git pull`) — the frame sequence was converted to JPG to cut the payload from ~386 MB to ~33 MB. If you need the original PNGs, `git checkout <pre-conversion-sha>`.
-
-You should see:
-
-1. A green loading screen with a spinner.
-2. Hero garden image fades in with the headline "Your garden, reimagined."
-3. Scrolling triggers a 121-frame disassembly animation while four headlines pass through view.
-4. After the hero, six modal cards (about, work, services, process, faq, contact) slide up the screen in sequence as a conveyor belt.
-5. Mouse parallax on desktop, hamburger nav on mobile, back-to-top button, no visible scrollbar.
+- **You cloned an older revision that referenced PNG frames.** Pull main (`git pull`) — the frame sequence was converted to JPG to cut the payload from ~386 MB to ~16 MB. If you need the original PNGs, `git checkout <pre-conversion-sha>`.
 
 ## Customise for your own brand
 

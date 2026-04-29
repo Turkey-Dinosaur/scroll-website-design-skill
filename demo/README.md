@@ -1,6 +1,6 @@
 # Demo — Verdant Studio (placeholder)
 
-A working replica of the production landscaping site this skill was extracted from. All brand and contact information is replaced with placeholders; the gallery imagery and 121-frame hero animation are real.
+A working replica of the production landscaping site this skill was extracted from. All brand and contact information is replaced with placeholders; the gallery imagery and 61-frame hero animation are real.
 
 ## Run locally
 
@@ -19,7 +19,7 @@ Open http://localhost:8080.
 
 1. Loading screen with spinner (panel-green background).
 2. Hero garden image fades in with "Your garden, reimagined." headline.
-3. Scroll → 121-frame disassembly animation, four hero text overlays scale through view.
+3. Scroll → 61-frame disassembly animation, four hero text overlays scale through view.
 4. Six modal cards (about, work, services, process, faq, contact) march up the screen as a continuous conveyor belt.
 5. Mouse-tracked parallax on desktop; hamburger nav on mobile; back-to-top button after the hero.
 

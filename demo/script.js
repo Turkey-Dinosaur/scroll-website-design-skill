@@ -8,7 +8,7 @@
    ========================================================= */
 
 (() => {
-  const FRAME_COUNT = 121;
+  const FRAME_COUNT = 61;
   const framePath = (i) => `frames/frame-${String(i + 1).padStart(3, '0')}.jpg`;
 
   // The hero canvas + overlays own the first viewport-height of body

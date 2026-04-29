@@ -77,7 +77,7 @@ gsap.to(strip, {
 
 ## Hero canvas + text overlays
 
-A 121-frame PNG sequence (or any N-frame sequence) is preloaded then drawn to a canvas as the user scrolls. Frame index = `Math.round(scrollProgress * (FRAME_COUNT - 1))`.
+A 61-frame PNG sequence (or any N-frame sequence) is preloaded then drawn to a canvas as the user scrolls. Frame index = `Math.round(scrollProgress * (FRAME_COUNT - 1))`.
 
 The hero owns exactly the **first viewport** of body scroll. Within that viewport, four text overlays each take a quarter-slice and play a "scale through viewer" animation — scale 0.5 → 1 → 1.7 paired with opacity 0 → 1 → 0 — so the words feel like they pass through the camera as you scroll.
 
@@ -218,6 +218,6 @@ So motion-sensitive users get a normal stacked-section page with the same conten
 - `demo/index.html` — reference markup (with placeholder brand)
 - `demo/style.css` — full stylesheet
 - `demo/script.js` — full conveyor + parallax + nav logic
-- `demo/frames/` — 121-frame hero sequence (JPG, ~33 MB total)
+- `demo/frames/` — 61-frame hero sequence (JPG, ~16 MB total)
 - `demo/gallery-*.svg` — placeholder gallery imagery
 - `README.md` — installation and usage instructions
