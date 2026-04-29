@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 800" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#3f4d34"/>
+      <stop offset="100%" stop-color="#22301a"/>
+    </linearGradient>
+    <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse">
+      <path d="M 80 0 L 0 0 0 80" fill="none" stroke="rgba(255,255,255,0.04)" stroke-width="1"/>
+    </pattern>
+  </defs>
+  <rect width="800" height="800" fill="url(#g)"/>
+  <rect width="800" height="800" fill="url(#grid)"/>
+  <!-- abstract leaf silhouette in corner -->
+  <path d="M 600,560 Q 700,500 720,420 Q 760,420 760,500 Q 760,600 660,640 Q 600,650 600,560 Z"
+        fill="rgba(255,255,255,0.05)"/>
+  <text x="400" y="400" text-anchor="middle"
+        font-family="serif" font-style="italic" font-size="36"
+        fill="rgba(255,255,255,0.55)">Gallery placeholder 02</text>
+  <text x="400" y="450" text-anchor="middle"
+        font-family="sans-serif" font-size="20" letter-spacing="2"
+        fill="rgba(255,255,255,0.32)">Tiered patio · curved steps</text>
+</svg>

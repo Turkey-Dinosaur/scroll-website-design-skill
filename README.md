@@ -49,22 +49,64 @@ git clone https://github.com/Leonxlnx/taste-skill.git \
 
 `taste-skill` enforces metric-based UI rules (typography, spacing, motion) and pairs naturally with the architecture this skill provides — `taste-skill` answers *what should it look like*, this skill answers *how does the scroll mechanism work*.
 
-## Run the demo locally
+## Getting Started — run the demo locally
+
+These are the exact end-to-end steps. Skip none of them — Git LFS in particular is **required**, not optional.
+
+### Prerequisites
+
+Install once per machine:
+
+| Tool | Ubuntu / Debian | macOS | Windows |
+|------|-----------------|-------|---------|
+| Git | `sudo apt install git` | (built-in / Xcode tools) | <https://git-scm.com> |
+| **Git LFS** | `sudo apt install git-lfs` | `brew install git-lfs` | `winget install GitHub.GitLFS` |
+| Python 3 (for the local server) | `sudo apt install python3` | (built-in) | `winget install Python.Python.3` |
+
+(Any web server works — `npx serve`, `php -S`, VSCode Live Server, etc. — Python is just the most likely to already be installed.)
+
+### Steps
 
 ```bash
-# 1. Make sure Git LFS is installed (one time)
+# 1. Initialise Git LFS for your user (one-time per machine).
 git lfs install
 
-# 2. Clone with LFS so the 386 MB of frames come down
+# 2. Clone the repo. Modern Git auto-pulls LFS objects during clone,
+#    but older versions don't — step 4 covers the gap.
 git clone https://github.com/Turkey-Dinosaur/scroll-website-design-skill.git
-cd scroll-website-design-skill/demo
+cd scroll-website-design-skill
 
-# 3. Serve over HTTP (any web server works)
-python -m http.server 8080
-# or:  npx serve -l 8080
+# 3. Verify LFS came down. A real frame is ~3 MB:
+ls -la demo/frames/frame-001.png
+# If it shows ~130 bytes (a "pointer file"), Git did NOT pull LFS — go to step 4.
+# If it shows ~3 MB, you're fine — skip to step 5.
 
-# 4. Open http://localhost:8080
+# 4. Pull the actual binaries from LFS (only if step 3 showed a tiny file).
+git lfs pull
+
+# 5. Serve the demo over HTTP. The site MUST be served — opening
+#    `index.html` directly via `file://` breaks the canvas frame loader.
+cd demo
+python3 -m http.server 8080
+# or:   npx serve -l 8080
+# or:   php -S localhost:8080
+
+# 6. Open http://localhost:8080 in a browser.
 ```
+
+### What you should see
+
+1. A green loading screen with a spinner.
+2. Hero garden image fades in with the headline "Your garden, reimagined."
+3. Scrolling triggers a 121-frame disassembly animation while four headlines pass through view.
+4. After the hero, six modal cards (about, work, services, process, faq, contact) slide up the screen in sequence as a conveyor belt.
+5. Mouse parallax on desktop, hamburger nav on mobile, back-to-top button, no visible scrollbar.
+
+### Troubleshooting
+
+- **Frames are blank / canvas is dark / browser console says image decode failed.** Run `ls -la demo/frames/frame-001.png`. If it's ~130 bytes, LFS didn't pull — run `git lfs install && git lfs pull` and reload. Opening a frame directly in a desktop image viewer (Photos, Preview, etc.) and getting "not a recognised image format" is the same symptom.
+- **Conveyor doesn't move when scrolling.** Check the browser console for JS errors. Most commonly: GSAP CDN failed to load — verify network access to `cdn.jsdelivr.net`.
+- **Loading screen never goes away.** A frame failed to load. Check the Network tab for a 404 on any `frames/frame-NNN.png`.
 
 You should see:
 
