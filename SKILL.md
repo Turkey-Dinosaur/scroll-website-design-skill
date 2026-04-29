@@ -218,6 +218,6 @@ So motion-sensitive users get a normal stacked-section page with the same conten
 - `demo/index.html` — reference markup (with placeholder brand)
 - `demo/style.css` — full stylesheet
 - `demo/script.js` — full conveyor + parallax + nav logic
-- `demo/frames/` — 121-frame hero sequence (Git LFS)
-- `demo/*.jpg` — gallery placeholder images (Git LFS)
+- `demo/frames/` — 121-frame hero sequence (JPG, ~33 MB total)
+- `demo/gallery-*.svg` — placeholder gallery imagery
 - `README.md` — installation and usage instructions

@@ -9,7 +9,7 @@
 
 (() => {
   const FRAME_COUNT = 121;
-  const framePath = (i) => `frames/frame-${String(i + 1).padStart(3, '0')}.png`;
+  const framePath = (i) => `frames/frame-${String(i + 1).padStart(3, '0')}.jpg`;
 
   // The hero canvas + overlays own the first viewport-height of body
   // scroll. After that, the entire .deck__strip translates upward as
@@ -123,13 +123,15 @@
       img.onerror = () => resolve();
     });
 
+    // Show the site as soon as the FIRST frame is decoded — don't make
+    // the user wait for all 121 (~386 MB) over the network. The remaining
+    // frames stream in the background; drawFrame() is already a no-op for
+    // any frame index whose image hasn't arrived yet, so the canvas just
+    // holds the last successfully-drawn frame until the next one lands.
     preload(0).then(() => {
       sizeCanvas();
       drawFrame(0);
-      const rest = [];
-      for (let i = 1; i < FRAME_COUNT; i++) rest.push(preload(i));
-      return Promise.all(rest);
-    }).then(() => {
+
       if (window.gsap) {
         gsap.to(loader, { opacity: 0, duration: 0.55, ease: 'power2.out', onComplete: () => loader.classList.add('is-hidden') });
         gsap.to(canvas, { opacity: 1, duration: 0.7, ease: 'power2.out' });
@@ -139,6 +141,16 @@
       }
       bindScrollSequence();
       bindOverlays();
+
+      // Background-stream the remaining 120 frames. Refresh ScrollTrigger
+      // once they're all in so any cached layout that depended on them
+      // is up to date (defensive — the deck doesn't actually depend on
+      // frame load state).
+      const rest = [];
+      for (let i = 1; i < FRAME_COUNT; i++) rest.push(preload(i));
+      Promise.all(rest).then(() => {
+        if (window.ScrollTrigger) ScrollTrigger.refresh();
+      });
     });
 
     function sizeCanvas() {

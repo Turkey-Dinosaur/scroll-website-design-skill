@@ -1,6 +1,7 @@
-# Hero frame sequence (121 PNGs, ~386 MB) → Git LFS so cloning the
-# code-only payload stays fast and bandwidth doesn't blow up.
-demo/frames/*.png filter=lfs diff=lfs merge=lfs -text
+# Hero frame sequence — JPG ~250 KB each, ~33 MB total. Small enough
+# to stay in regular git (no LFS needed). Previously PNGs in LFS;
+# converted to JPG q=4 in commit "perf: convert hero frame sequence
+# from PNG to JPG". Cloners no longer need `git lfs pull`.
 
 # Normalise text file line endings.
 *.html text eol=lf

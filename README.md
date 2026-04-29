@@ -8,8 +8,8 @@ The skill is the distilled-pattern playbook (`SKILL.md`). The `demo/` folder is 
 
 - **`SKILL.md`** — the reusable design-pattern guide. Loaded by Claude Code when you invoke the skill from any project, gives the model a complete blueprint of the architecture, choreography, and gotchas.
 - **`demo/`** — a self-contained replica site. Open `demo/index.html` in a browser via `localhost` (e.g. `python -m http.server` from the `demo/` folder) and you should see exactly the same scroll experience as the production site — placeholder brand and contact info only.
-- **121 hero frames** in `demo/frames/` (≈386 MB, Git LFS).
-- **Eight gallery images** in `demo/`.
+- **121 hero frames** in `demo/frames/` (JPG, ~33 MB total).
+- **Eight placeholder gallery SVGs** in `demo/`.
 - **Reduced-motion fallback** that reverts to a normal stacked-section layout for users with `prefers-reduced-motion: reduce`.
 
 ## Prerequisites
@@ -18,8 +18,7 @@ The skill is the distilled-pattern playbook (`SKILL.md`). The `demo/` folder is 
 |-----|-----------|-------|
 | **Modern browser** | required | Chromium / Firefox / Safari current versions. Uses `backdrop-filter`, `clamp()`, ES2020 JS, `pointer-events`. |
 | **GSAP 3.x + ScrollTrigger** | required | Loaded via CDN in `demo/index.html`. Source: <https://github.com/greensock/GSAP.git> |
-| **Git LFS** | required to clone | The 121-frame hero sequence is stored in LFS. `git lfs install` once per machine, then `git clone` works as normal. |
-| **Local web server** | required to run | The site uses `fetch`-style image loads that need an HTTP origin (file:// breaks the canvas). `python -m http.server`, `npx serve`, or any equivalent works. |
+| **Local web server** | required to run | The canvas frame loader needs an HTTP origin (`file://` breaks it). `python -m http.server`, `npx serve`, or any equivalent works. |
 | **`taste-skill`** *(recommended)* | optional | Companion skill for premium UX/UI quality enforcement. Install: <https://github.com/Leonxlnx/taste-skill.git> |
 
 ## Install the skill
@@ -51,52 +50,36 @@ git clone https://github.com/Leonxlnx/taste-skill.git \
 
 ## Getting Started — run the demo locally
 
-These are the exact end-to-end steps. Skip none of them — Git LFS in particular is **required**, not optional.
-
 ### Prerequisites
 
 Install once per machine:
 
 | Tool | Ubuntu / Debian | macOS | Windows |
 |------|-----------------|-------|---------|
-| Git | `sudo apt install git` | (built-in / Xcode tools) | <https://git-scm.com> |
-| **Git LFS** | `sudo apt install git-lfs` | `brew install git-lfs` | `winget install GitHub.GitLFS` |
-| Python 3 (for the local server) | `sudo apt install python3` | (built-in) | `winget install Python.Python.3` |
+| Git | `sudo apt install git` | built-in / Xcode tools | <https://git-scm.com> |
+| Python 3 (for the local server) | `sudo apt install python3` | built-in | `winget install Python.Python.3` |
 
 (Any web server works — `npx serve`, `php -S`, VSCode Live Server, etc. — Python is just the most likely to already be installed.)
 
 ### Steps
 
 ```bash
-# 1. Initialise Git LFS for your user (one-time per machine).
-git lfs install
-
-# 2. Clone the repo. Modern Git auto-pulls LFS objects during clone,
-#    but older versions don't — step 4 covers the gap.
+# 1. Clone the repo (no LFS — frames ship as JPGs in regular git, ~33 MB).
 git clone https://github.com/Turkey-Dinosaur/scroll-website-design-skill.git
-cd scroll-website-design-skill
+cd scroll-website-design-skill/demo
 
-# 3. Verify LFS came down. A real frame is ~3 MB:
-ls -la demo/frames/frame-001.png
-# If it shows ~130 bytes (a "pointer file"), Git did NOT pull LFS — go to step 4.
-# If it shows ~3 MB, you're fine — skip to step 5.
-
-# 4. Pull the actual binaries from LFS (only if step 3 showed a tiny file).
-git lfs pull
-
-# 5. Serve the demo over HTTP. The site MUST be served — opening
+# 2. Serve the demo over HTTP. The site MUST be served — opening
 #    `index.html` directly via `file://` breaks the canvas frame loader.
-cd demo
 python3 -m http.server 8080
 # or:   npx serve -l 8080
 # or:   php -S localhost:8080
 
-# 6. Open http://localhost:8080 in a browser.
+# 3. Open http://localhost:8080 in a browser.
 ```
 
 ### What you should see
 
-1. A green loading screen with a spinner.
+1. A green loading screen with a spinner — usually for under a second.
 2. Hero garden image fades in with the headline "Your garden, reimagined."
 3. Scrolling triggers a 121-frame disassembly animation while four headlines pass through view.
 4. After the hero, six modal cards (about, work, services, process, faq, contact) slide up the screen in sequence as a conveyor belt.
@@ -104,9 +87,10 @@ python3 -m http.server 8080
 
 ### Troubleshooting
 
-- **Frames are blank / canvas is dark / browser console says image decode failed.** Run `ls -la demo/frames/frame-001.png`. If it's ~130 bytes, LFS didn't pull — run `git lfs install && git lfs pull` and reload. Opening a frame directly in a desktop image viewer (Photos, Preview, etc.) and getting "not a recognised image format" is the same symptom.
+- **Site is stuck on "Loading the garden…"** A frame failed to fetch. Open DevTools → Network and look for a 404 on any `frames/frame-NNN.jpg`. The loader only blocks until frame 1 arrives, so a stuck loader means frame 1 itself is missing.
 - **Conveyor doesn't move when scrolling.** Check the browser console for JS errors. Most commonly: GSAP CDN failed to load — verify network access to `cdn.jsdelivr.net`.
-- **Loading screen never goes away.** A frame failed to load. Check the Network tab for a 404 on any `frames/frame-NNN.png`.
+- **Frames look blocky / artefacted.** They're JPG q≈85 — high quality but you may want to swap in your own crisper sequence (see "Customise" below).
+- **You cloned an older revision that referenced PNG frames.** Pull main (`git pull`) — the frame sequence was converted to JPG to cut the payload from ~386 MB to ~33 MB. If you need the original PNGs, `git checkout <pre-conversion-sha>`.
 
 You should see:
 
