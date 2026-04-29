@@ -1,0 +1,10 @@
+# Hero frame sequence (121 PNGs, ~386 MB) → Git LFS so cloning the
+# code-only payload stays fast and bandwidth doesn't blow up.
+demo/frames/*.png filter=lfs diff=lfs merge=lfs -text
+
+# Normalise text file line endings.
+*.html text eol=lf
+*.css  text eol=lf
+*.js   text eol=lf
+*.md   text eol=lf
+*.svg  text eol=lf

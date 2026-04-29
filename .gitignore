@@ -1,0 +1,12 @@
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Local Claude Code permissions
+.claude/
+
+# Editor crud
+.vscode/
+.idea/
+*.swp

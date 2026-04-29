@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3a4a30"/>
+      <stop offset="100%" stop-color="#1f2a18"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="600" fill="url(#bg)"/>
+  <!-- abstract head silhouette -->
+  <circle cx="400" cy="240" r="95" fill="rgba(255,255,255,0.10)"/>
+  <path d="M250,520 C 250,400 330,355 400,355 C 470,355 550,400 550,520 Z"
+        fill="rgba(255,255,255,0.10)"/>
+  <text x="400" y="568" text-anchor="middle"
+        font-family="serif" font-style="italic" font-size="22"
+        fill="rgba(255,255,255,0.55)">your portrait</text>
+</svg>
