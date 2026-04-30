@@ -9,8 +9,7 @@
 
 (() => {
   const FRAME_COUNT = 61;
-  const WEBP = (() => { const c = document.createElement('canvas'); return c.toDataURL && c.toDataURL('image/webp').indexOf('data:image/webp') === 0; })();
-  const framePath = (i) => `frames/frame-${String(i + 1).padStart(3, '0')}.${WEBP ? 'webp' : 'jpg'}`;
+  const framePath = (i) => `frames/frame-${String(i + 1).padStart(3, '0')}.webp`;
 
   // The hero canvas + overlays own the first viewport-height of body
   // scroll. After that, the entire .deck__strip translates upward as

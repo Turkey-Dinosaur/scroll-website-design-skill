@@ -89,15 +89,15 @@ Frames load in three phases to minimise time-to-interactive:
 
 If the user scrolls to a frame that hasn't loaded yet, a `nearestLoaded()` fallback finds the closest available frame — the 0.55 s scrub smoothing means this rarely triggers in practice.
 
-For WebP-capable browsers, `framePath()` auto-detects support and serves `.webp` instead of the original format (typically 30-50% smaller). The original files are kept as fallback.
+Frames use WebP format for optimal file size (typically 30-50% smaller than JPEG/PNG at equivalent quality).
 
 ```html
 <!-- Preload the Phase 1 critical batch -->
-<link rel="preload" as="image" href="frames/frame-001.jpg" fetchpriority="high" />
-<link rel="preload" as="image" href="frames/frame-002.jpg" />
-<link rel="preload" as="image" href="frames/frame-003.jpg" />
-<link rel="preload" as="image" href="frames/frame-004.jpg" />
-<link rel="preload" as="image" href="frames/frame-005.jpg" />
+<link rel="preload" as="image" href="frames/frame-001.webp" fetchpriority="high" />
+<link rel="preload" as="image" href="frames/frame-002.webp" />
+<link rel="preload" as="image" href="frames/frame-003.webp" />
+<link rel="preload" as="image" href="frames/frame-004.webp" />
+<link rel="preload" as="image" href="frames/frame-005.webp" />
 ```
 
 ### Scroll-linked frame sequence
@@ -244,6 +244,6 @@ So motion-sensitive users get a normal stacked-section page with the same conten
 - `demo/index.html` — reference markup (with placeholder brand)
 - `demo/style.css` — full stylesheet
 - `demo/script.js` — full conveyor + parallax + nav logic
-- `demo/frames/` — 61-frame hero sequence (JPG, ~16 MB total)
+- `demo/frames/` — 61-frame hero sequence (WebP, ~8 MB total)
 - `demo/gallery-*.svg` — placeholder gallery imagery
 - `README.md` — installation and usage instructions
