@@ -41,13 +41,6 @@
 
 html {
   -webkit-text-size-adjust: 100%;
-  /* Smooth scroll handled in JS for the deck handoff. */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-html::-webkit-scrollbar {
-  display: none;
 }
 
 body {
@@ -62,16 +55,6 @@ body {
   font-feature-settings: "ss01", "cv11";
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* No overflow-x: hidden here — the spec coerces overflow-y: visible to
-     auto when the other axis is hidden, which makes <body> a scroll
-     container and breaks ScrollTrigger's window-scroll listener. The
-     fixed .stage already clips horizontal overflow. */
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-}
-
-body::-webkit-scrollbar {
-  display: none;
 }
 
 img {
@@ -91,7 +74,7 @@ button {
 }
 
 ::selection {
-  background: var(--warm);
+  background: #e8b07a;
   color: #1a1018;
 }
 
@@ -135,7 +118,7 @@ button {
 
 .display em {
   font-style: italic;
-  color: var(--warm);
+  color: #e8b07a;
 }
 
 /* =========================================================
@@ -350,15 +333,47 @@ button {
   min-height: 86vh;
   max-height: 92vh;
   overflow: visible;
-  background: #2e3a26;
-  border: 1px solid var(--line-2);
+  position: relative;
+  background: url('Camel-C1.jpg') repeat center / 600px;
+  border: 1px solid rgba(0, 0, 0, 0.18);
   border-radius: 22px;
   padding: clamp(1.5rem, 3vw, 2.75rem);
   pointer-events: auto;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.3),
+    0 16px 40px rgba(0, 0, 0, 0.4),
+    0 50px 100px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
   justify-content: center;
+  /* Dark text palette for light sandstone background */
+  --ink: rgba(35, 30, 25, 0.92);
+  --ink-2: rgba(35, 30, 25, 0.68);
+  --ink-3: rgba(35, 30, 25, 0.46);
+  --line: rgba(0, 0, 0, 0.08);
+  --line-2: rgba(0, 0, 0, 0.16);
+  --warm: #9b5e2c;
+  --warm-2: #7d4a1f;
+  color: var(--ink);
+}
+
+/* Frosted glass overlay — softens sandstone texture for text readability */
+.card__panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* All card content must sit above the overlay */
+.card__panel>* {
+  position: relative;
+  z-index: 1;
 }
 
 /* FAQ is the only modal allowed to scroll internally. */
@@ -366,7 +381,7 @@ button {
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-width: thin;
-  scrollbar-color: rgba(255, 255, 255, 0.18) transparent;
+  scrollbar-color: rgba(0, 0, 0, 0.22) transparent;
   justify-content: flex-start;
 }
 
@@ -375,7 +390,7 @@ button {
 }
 
 [data-card="faq"] .card__panel::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.18);
+  background: rgba(0, 0, 0, 0.22);
   border-radius: 4px;
 }
 
@@ -589,6 +604,61 @@ button {
 }
 
 /* =========================================================
+   SECTION CTA — appears at the bottom of each modal card to
+   give the user a clear next step (mostly into the contact card).
+   Two variants: solid warm pill (default) and ghost/outlined
+   (used in FAQ where the prompt is more conversational).
+   ========================================================= */
+.section-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: .55rem;
+  margin-top: clamp(1.5rem, 3vw, 2.25rem);
+  padding: .85rem 1.5rem;
+  background: var(--warm);
+  color: #1a1018;
+  border: 1px solid var(--warm);
+  border-radius: 999px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  font-size: .98rem;
+  white-space: nowrap;
+  transition:
+    background .35s var(--ease),
+    border-color .35s var(--ease),
+    transform .3s var(--ease),
+    color .3s var(--ease);
+}
+
+.section-cta:hover {
+  background: var(--warm-2);
+  border-color: var(--warm-2);
+  transform: translateY(-2px);
+}
+
+.section-cta__arrow {
+  width: 1em;
+  height: 1em;
+  transition: transform .3s var(--ease);
+}
+
+.section-cta:hover .section-cta__arrow {
+  transform: translateX(3px);
+}
+
+.section-cta--ghost {
+  background: transparent;
+  color: var(--ink);
+  border-color: var(--line-2);
+}
+
+.section-cta--ghost:hover {
+  background: rgba(255, 255, 255, 0.045);
+  border-color: var(--warm);
+  color: var(--warm);
+}
+
+/* =========================================================
    ABOUT
    ========================================================= */
 .about {
@@ -671,7 +741,7 @@ button {
   padding: 1rem 1.25rem;
   background: linear-gradient(to top, rgba(20, 12, 18, 0.85), transparent);
   font-size: .82rem;
-  color: var(--ink-2);
+  color: rgba(255, 255, 255, 0.66);
   letter-spacing: .04em;
 }
 
@@ -722,13 +792,13 @@ button {
   left: 0;
   bottom: 0;
   height: 2px;
-  background: var(--warm);
+  background: #c07830;
   width: 0;
   transition: width .55s var(--ease);
 }
 
 .service:hover {
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
@@ -739,7 +809,7 @@ button {
 .service__icon {
   width: 44px;
   height: 44px;
-  color: var(--sage);
+  color: var(--ink);
 }
 
 .service__icon svg {
@@ -800,13 +870,13 @@ button {
   left: 0;
   bottom: 0;
   height: 2px;
-  background: var(--warm);
+  background: #c07830;
   width: 0;
   transition: width .55s var(--ease);
 }
 
 .process__step:hover {
-  background: rgba(255, 255, 255, 0.045);
+  background: rgba(255, 255, 255, 0.15);
   transform: translateY(-2px);
 }
 
@@ -817,7 +887,7 @@ button {
 .process__num {
   font-family: var(--display);
   font-style: italic;
-  color: var(--warm);
+  color: #c07830;
   font-size: 1.05rem;
   letter-spacing: -0.01em;
   display: block;
@@ -867,9 +937,8 @@ button {
 .tile {
   position: relative;
   overflow: hidden;
-  /* Slightly darker than the panel green so the placeholder reads
-     before the image loads, but still in palette. */
-  background: #243018;
+  /* Placeholder tone while image loads — matches sandstone palette. */
+  background: rgba(0, 0, 0, 0.15);
   border: 0;
   padding: 0;
   cursor: zoom-in;
@@ -880,7 +949,7 @@ button {
 }
 
 .tile:focus-visible {
-  box-shadow: 0 0 0 2px var(--warm);
+  box-shadow: 0 0 0 2px #c07830;
 }
 
 /* Modifier classes left in HTML are no-ops now — every tile is a square. */
@@ -1090,7 +1159,7 @@ button {
 }
 
 .qa summary:hover {
-  color: var(--warm);
+  color: #9b5e2c;
 }
 
 .qa summary i {
@@ -1192,26 +1261,26 @@ button {
   border: 1px solid var(--line-2);
   font-size: .98rem;
   letter-spacing: .02em;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.15);
   transition: background .35s var(--ease), border-color .35s var(--ease), transform .3s var(--ease), color .3s var(--ease);
 }
 
 .chip:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.3);
   border-color: var(--ink-3);
   transform: translateY(-1px);
 }
 
 .chip--primary {
-  background: var(--warm);
+  background: #e8b07a;
   color: #1a1018;
-  border-color: var(--warm);
+  border-color: #e8b07a;
   font-weight: 500;
 }
 
 .chip--primary:hover {
-  background: var(--warm-2);
-  border-color: var(--warm-2);
+  background: #d4945a;
+  border-color: #d4945a;
   color: #1a1018;
 }
 
@@ -1244,7 +1313,7 @@ button {
 .field input,
 .field select,
 .field textarea {
-  background: rgba(255, 255, 255, 0.03);
+  background: rgba(255, 255, 255, 0.45);
   border: 1px solid var(--line-2);
   color: var(--ink);
   padding: .85rem 1rem;
@@ -1272,8 +1341,8 @@ button {
 }
 
 .field select option {
-  background: #2e3a26;
-  color: var(--ink);
+  background: #d4b896;
+  color: rgba(35, 30, 25, 0.92);
 }
 
 .field input:focus,
@@ -1281,7 +1350,7 @@ button {
 .field textarea:focus {
   outline: none;
   border-color: var(--warm);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.6);
 }
 
 .btn {
@@ -1298,13 +1367,13 @@ button {
 }
 
 .btn--primary {
-  background: var(--warm);
+  background: #e8b07a;
   color: #1a1018;
   font-weight: 500;
 }
 
 .btn--primary:hover {
-  background: var(--warm-2);
+  background: #d4945a;
   transform: translateY(-1px);
 }
 
@@ -1316,8 +1385,8 @@ button {
 }
 
 .form-note a {
-  color: var(--warm);
-  border-bottom: 1px solid var(--warm);
+  color: #9b5e2c;
+  border-bottom: 1px solid #9b5e2c;
 }
 
 /* =========================================================
