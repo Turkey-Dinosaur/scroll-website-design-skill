@@ -9,7 +9,8 @@
 
 (() => {
   const FRAME_COUNT = 61;
-  const framePath = (i) => `frames/frame-${String(i + 1).padStart(3, '0')}.jpg`;
+  const WEBP = (() => { const c = document.createElement('canvas'); return c.toDataURL && c.toDataURL('image/webp').indexOf('data:image/webp') === 0; })();
+  const framePath = (i) => `frames/frame-${String(i + 1).padStart(3, '0')}.${WEBP ? 'webp' : 'jpg'}`;
 
   // The hero canvas + overlays own the first viewport-height of body
   // scroll. After that, the entire .deck__strip translates upward as
@@ -123,11 +124,32 @@
       img.onerror = () => resolve();
     });
 
-    // Wait for ALL frames to load before showing the site. With the
-    // 16 MB JPG sequence this is typically 1-3 s on a normal connection
-    // — short enough to be acceptable, and once the loader dismisses
-    // every frame is in memory so scrolling is instantly perfect.
-    Promise.all(Array.from({ length: FRAME_COUNT }, (_, i) => preload(i))).then(() => {
+    // Find the closest loaded frame when the target hasn't arrived yet.
+    function nearestLoaded(target) {
+      if (images[target]) return target;
+      for (let d = 1; d < FRAME_COUNT; d++) {
+        if (target - d >= 0 && images[target - d]) return target - d;
+        if (target + d < FRAME_COUNT && images[target + d]) return target + d;
+      }
+      return 0;
+    }
+
+    // Load a range of frames sequentially (one at a time to avoid
+    // saturating bandwidth while the page is already interactive).
+    function loadRange(start, end) {
+      let chain = Promise.resolve();
+      for (let i = start; i <= end; i++) {
+        chain = chain.then(() => preload(i));
+      }
+      return chain;
+    }
+
+    // Phase 1: load the first 5 frames, then dismiss the loader and
+    // make the page interactive. Phases 2-3 stream the remaining
+    // frames in the background — the 0.55 s scrub smoothing gives
+    // the sequential loader time to stay ahead of the scroll.
+    const CRITICAL = 5;
+    Promise.all(Array.from({ length: CRITICAL }, (_, i) => preload(i))).then(() => {
       sizeCanvas();
       drawFrame(0);
 
@@ -140,6 +162,9 @@
       }
       bindScrollSequence();
       bindOverlays();
+
+      // Phase 2 (eager): frames 5-20, then Phase 3 (background): 21-end
+      loadRange(CRITICAL, 20).then(() => loadRange(21, FRAME_COUNT - 1));
     });
 
     function sizeCanvas() {
@@ -180,7 +205,8 @@
           invalidateOnRefresh: true,
           onUpdate: () => {
             const idx = Math.max(0, Math.min(FRAME_COUNT - 1, Math.round(obj.frame)));
-            if (idx !== currentIndex) drawFrame(idx);
+            const safe = nearestLoaded(idx);
+            if (safe !== currentIndex) drawFrame(safe);
           }
         }
       });
