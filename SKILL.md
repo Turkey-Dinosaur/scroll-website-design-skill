@@ -77,7 +77,30 @@ gsap.to(strip, {
 
 ## Hero canvas + text overlays
 
-A 61-frame PNG sequence (or any N-frame sequence) is preloaded then drawn to a canvas as the user scrolls. Frame index = `Math.round(scrollProgress * (FRAME_COUNT - 1))`.
+An N-frame image sequence is **progressively loaded** then drawn to a canvas as the user scrolls. Frame index = `Math.round(scrollProgress * (FRAME_COUNT - 1))`.
+
+### Progressive frame loading
+
+Frames load in three phases to minimise time-to-interactive:
+
+1. **Phase 1 (critical, blocks loader):** The first 5 frames load in parallel. Once they resolve the loader dismisses, the canvas fades in, and scroll interactions activate. Preload hints in `<head>` prime these frames early.
+2. **Phase 2 (eager, background):** Frames 5–20 load sequentially so the browser streams one at a time without saturating bandwidth.
+3. **Phase 3 (background):** Remaining frames (21–end) load sequentially.
+
+If the user scrolls to a frame that hasn't loaded yet, a `nearestLoaded()` fallback finds the closest available frame — the 0.55 s scrub smoothing means this rarely triggers in practice.
+
+Frames use WebP format for optimal file size (typically 30-50% smaller than JPEG/PNG at equivalent quality).
+
+```html
+<!-- Preload the Phase 1 critical batch -->
+<link rel="preload" as="image" href="frames/frame-001.webp" fetchpriority="high" />
+<link rel="preload" as="image" href="frames/frame-002.webp" />
+<link rel="preload" as="image" href="frames/frame-003.webp" />
+<link rel="preload" as="image" href="frames/frame-004.webp" />
+<link rel="preload" as="image" href="frames/frame-005.webp" />
+```
+
+### Scroll-linked frame sequence
 
 The hero owns exactly the **first viewport** of body scroll. Within that viewport, four text overlays each take a quarter-slice and play a "scale through viewer" animation — scale 0.5 → 1 → 1.7 paired with opacity 0 → 1 → 0 — so the words feel like they pass through the camera as you scroll.
 
@@ -91,7 +114,10 @@ gsap.to(obj, {
     start: 'top top',
     end: () => `top+=${heroPx()}px top`,
     scrub: 0.55,
-    onUpdate: () => drawFrame(Math.round(obj.frame))
+    onUpdate: () => {
+      const idx = Math.round(obj.frame);
+      drawFrame(nearestLoaded(idx));
+    }
   }
 });
 ```
@@ -218,6 +244,6 @@ So motion-sensitive users get a normal stacked-section page with the same conten
 - `demo/index.html` — reference markup (with placeholder brand)
 - `demo/style.css` — full stylesheet
 - `demo/script.js` — full conveyor + parallax + nav logic
-- `demo/frames/` — 61-frame hero sequence (JPG, ~16 MB total)
+- `demo/frames/` — 61-frame hero sequence (WebP, ~8 MB total)
 - `demo/gallery-*.svg` — placeholder gallery imagery
 - `README.md` — installation and usage instructions
